@@ -1,7 +1,7 @@
 package com.adnancigtekin.saga.order.service.impl;
 
 import com.adnancigtekin.saga.order.dto.OrderDto;
-import com.adnancigtekin.saga.order.event.order.OrderCreatedEvent;
+import com.adnancigtekin.saga.event.order.OrderCreatedEvent;
 import com.adnancigtekin.saga.order.mapper.OrderMapper;
 import com.adnancigtekin.saga.order.model.Order;
 import com.adnancigtekin.saga.order.repository.OrderRepository;

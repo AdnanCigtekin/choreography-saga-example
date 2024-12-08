@@ -17,4 +17,5 @@ public class PaymentMethod {
     private String ownerSurname;
     @JsonProperty("cvv")
     private String cvv;
+    private Boolean passed;
 }

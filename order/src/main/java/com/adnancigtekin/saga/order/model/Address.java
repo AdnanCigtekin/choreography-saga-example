@@ -15,4 +15,5 @@ public class Address {
     private String country;
     @JsonProperty("zip_code")
     private String zipCode;
+    private Boolean passed;
 }

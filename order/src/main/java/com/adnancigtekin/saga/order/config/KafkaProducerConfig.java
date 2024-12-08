@@ -1,7 +1,7 @@
 package com.adnancigtekin.saga.order.config;
 
-import com.adnancigtekin.saga.order.event.order.OrderCreatedEvent;
-import com.adnancigtekin.saga.order.event.order.OrderFailedEvent;
+import com.adnancigtekin.saga.event.order.OrderCreatedEvent;
+import com.adnancigtekin.saga.event.order.OrderFailedEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +29,7 @@ public class KafkaProducerConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
+        //configProps.put(JsonSerializer.TYPE_MAPPINGS, "orderCreatedEvent:com.adnancigtekin.saga.order.event.OrderCreatedEvent");
 
         return new DefaultKafkaProducerFactory<>(configProps);
     }

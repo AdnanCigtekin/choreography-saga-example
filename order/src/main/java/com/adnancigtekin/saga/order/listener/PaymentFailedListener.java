@@ -1,8 +1,7 @@
 package com.adnancigtekin.saga.order.listener;
 
 
-import com.adnancigtekin.saga.order.event.payment.PaymentFailedEvent;
-import lombok.extern.log4j.Log4j;
+import com.adnancigtekin.saga.event.payment.PaymentFailedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

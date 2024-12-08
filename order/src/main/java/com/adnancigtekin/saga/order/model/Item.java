@@ -9,4 +9,5 @@ public class Item {
     private String itemId;
     @JsonProperty("purchased_amount")
     private Integer purchasedAmount;
+    private Boolean passed;
 }

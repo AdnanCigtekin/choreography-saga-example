@@ -1,8 +1,7 @@
 package com.adnancigtekin.saga.order.listener;
 
 
-import com.adnancigtekin.saga.order.event.inventory.ItemAllocationFailedEvent;
-import com.adnancigtekin.saga.order.event.payment.PaymentFailedEvent;
+import com.adnancigtekin.saga.event.inventory.ItemAllocationFailedEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -13,9 +12,12 @@ public class ItemAllocationFailedListener {
 
     @KafkaListener(
             topics = "inventoryTopic",
-            groupId = "my-group"
+            groupId = "my-group",
+            containerFactory = "kafkaItemAllocationFailedListenerContainerFactory"
     )
     public void listen(ItemAllocationFailedEvent event){
         log.info("Received Following Item Allocation Failure Event: {}",event);
+        // TODO: Add order failed event call
+
     }
 }
