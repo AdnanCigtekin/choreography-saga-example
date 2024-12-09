@@ -1,13 +1,12 @@
 package com.adnancigtekin.saga.order.service.impl;
 
+import com.adnancigtekin.saga.event.OrderEvent;
 import com.adnancigtekin.saga.order.dto.OrderDto;
-import com.adnancigtekin.saga.event.order.OrderCreatedEvent;
 import com.adnancigtekin.saga.order.mapper.OrderMapper;
 import com.adnancigtekin.saga.order.model.Order;
 import com.adnancigtekin.saga.order.repository.OrderRepository;
 import com.adnancigtekin.saga.order.service.OrderService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +17,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Qualifier("orderCreationTemplate")
-    private final KafkaTemplate<String, OrderCreatedEvent> kafkaOrderCreationTemplate;
+    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
 
 
     private final OrderMapper orderMapper;
@@ -33,9 +31,9 @@ public class OrderServiceImpl implements OrderService {
         orderDocument.setStatus("PENDING");
         Order savedOrder = orderRepository.save(orderDocument);
 
-        OrderCreatedEvent orderCreatedEvent = new OrderCreatedEvent(savedOrder.getId(),"PENDING",order);
+        OrderEvent orderCreatedEvent = new OrderEvent(savedOrder.getId(),"PENDING",order,"order-created");
 
-        kafkaOrderCreationTemplate.send("orderTopic",orderCreatedEvent);
+        kafkaTemplate.send("orderTopic",orderCreatedEvent);
         return false;
     }
 }

@@ -1,15 +1,12 @@
 package com.adnancigtekin.saga.inventory.listener;
 
 
-import com.adnancigtekin.saga.event.inventory.ItemAllocationFailedEvent;
-import com.adnancigtekin.saga.event.inventory.ItemAllocationSuccessEvent;
-import com.adnancigtekin.saga.event.order.OrderCreatedEvent;
+import com.adnancigtekin.saga.event.OrderEvent;
 import com.adnancigtekin.saga.inventory.model.InventoryItem;
 import com.adnancigtekin.saga.inventory.model.Item;
 import com.adnancigtekin.saga.inventory.repository.InventoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
@@ -25,16 +22,18 @@ public class OrderCreatedListener {
     private InventoryRepository inventoryRepository;
 
 
-    private final KafkaTemplate<String, ItemAllocationSuccessEvent> kafkaItemAllocationSuccessTemplate;
-    private final KafkaTemplate<String, ItemAllocationFailedEvent> kafkaItemAllocationFailedTemplate;
+    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
 
 
     @KafkaListener(
             topics = "orderTopic",
-            groupId = "my-group",
+            groupId = "order-created",
             containerFactory = "orderCreatedListenerContainerFactory"
     )
-    public void listen(OrderCreatedEvent event){
+    public void listen(OrderEvent event){
+        if(!event.getType().equals("order-created")){
+            return;
+        }
         log.info("Received Following Order Created Event: {}",event);
         List<Item> orderedItems = event.getDetails().getItems();
 
@@ -52,8 +51,8 @@ public class OrderCreatedListener {
                 itemAmount -= item.getPurchasedAmount();
                 if(itemAmount < 0){
                     transactionSuccessful = false;
-                    ItemAllocationFailedEvent itemAllocationFailedEvent = new ItemAllocationFailedEvent(event.getOrderId(), "FAILED",event.getDetails());
-                    kafkaItemAllocationFailedTemplate.send("inventoryTopic",itemAllocationFailedEvent);
+                    OrderEvent itemAllocationFailedEvent = new OrderEvent(event.getOrderId(), "FAILED",event.getDetails(),"item-allocation-failed");
+                    kafkaTemplate.send("inventoryTopic",itemAllocationFailedEvent);
                     break;
                 }
                 else{
@@ -65,8 +64,8 @@ public class OrderCreatedListener {
             }
             else{
                 transactionSuccessful = false;
-                ItemAllocationFailedEvent itemAllocationFailedEvent = new ItemAllocationFailedEvent(event.getOrderId(), "FAILED",event.getDetails());
-                kafkaItemAllocationFailedTemplate.send("inventoryTopic",itemAllocationFailedEvent);
+                OrderEvent itemAllocationFailedEvent = new OrderEvent(event.getOrderId(), "FAILED",event.getDetails(),"item-allocation-failed");
+                kafkaTemplate.send("inventoryTopic",itemAllocationFailedEvent);
                 break;
             }
         }
@@ -74,9 +73,9 @@ public class OrderCreatedListener {
         if (transactionSuccessful){
             log.info("Transaction successful for : {}",event.getOrderId());
             inventoryRepository.saveAll(inventoryItems);
-            ItemAllocationSuccessEvent itemAllocationSuccessEvent = new ItemAllocationSuccessEvent(event.getOrderId(), "PENDING",event.getDetails());
+            OrderEvent itemAllocationSuccessEvent = new OrderEvent(event.getOrderId(), "PENDING",event.getDetails(),"items-allocated");
             itemAllocationSuccessEvent.getDetails().setItems(passedEventItems);
-            kafkaItemAllocationSuccessTemplate.send("inventoryTopic",itemAllocationSuccessEvent);
+            kafkaTemplate.send("inventoryTopic",itemAllocationSuccessEvent);
         }else{
             log.error("Transaction failed for : {}",event.getOrderId());
         }

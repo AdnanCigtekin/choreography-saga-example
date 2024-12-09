@@ -1,7 +1,7 @@
 package com.adnancigtekin.saga.order.config;
 
-import com.adnancigtekin.saga.event.order.OrderCreatedEvent;
-import com.adnancigtekin.saga.event.order.OrderFailedEvent;
+import com.adnancigtekin.saga.event.OrderEvent;
+
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,7 +24,7 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, OrderCreatedEvent> orderCreationProducerFactory() {
+    public ProducerFactory<String, OrderEvent> orderCreationProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -35,29 +35,12 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    @Qualifier("orderCreationTemplate")
-    public KafkaTemplate<String, OrderCreatedEvent> kafkaOrderCreationTemplate() {
+    public KafkaTemplate<String, OrderEvent> kafkaOrderCreationTemplate() {
         return new KafkaTemplate<>(orderCreationProducerFactory());
     }
 
 
 
-    @Bean
-    public ProducerFactory<String, OrderFailedEvent> orderFailureProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-
-    @Bean
-    @Qualifier("orderFailureTemplate")
-    public KafkaTemplate<String, OrderFailedEvent> kafkaOrderFailureTemplate() {
-        return new KafkaTemplate<>(orderFailureProducerFactory());
-    }
 
 
 }

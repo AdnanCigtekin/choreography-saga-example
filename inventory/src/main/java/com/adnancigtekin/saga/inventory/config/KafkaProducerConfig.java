@@ -1,10 +1,9 @@
 package com.adnancigtekin.saga.inventory.config;
 
-import com.adnancigtekin.saga.event.inventory.ItemAllocationFailedEvent;
-import com.adnancigtekin.saga.event.inventory.ItemAllocationSuccessEvent;
+import com.adnancigtekin.saga.event.OrderEvent;
+
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +23,7 @@ public class KafkaProducerConfig {
     private String bootstrapAddress;
 
     @Bean
-    public ProducerFactory<String, ItemAllocationSuccessEvent> itemAllocationSuccessProducerFactory() {
+    public ProducerFactory<String, OrderEvent> kafkaProducerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -35,29 +34,13 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    @Qualifier("itemAllocationSuccessTemplate")
-    public KafkaTemplate<String, ItemAllocationSuccessEvent> kafkaItemAllocationSuccessTemplate() {
-        return new KafkaTemplate<>(itemAllocationSuccessProducerFactory());
+    public KafkaTemplate<String, OrderEvent> kafkaTemplate() {
+        return new KafkaTemplate<>(kafkaProducerFactory());
     }
 
 
 
-    @Bean
-    public ProducerFactory<String, ItemAllocationFailedEvent> itemAllocationFailedProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-
-        return new DefaultKafkaProducerFactory<>(configProps);
-    }
-
-    @Bean
-    @Qualifier("itemAllocationFailedTemplate")
-    public KafkaTemplate<String, ItemAllocationFailedEvent> kafkaItemAllocationFailedTemplate() {
-        return new KafkaTemplate<>(itemAllocationFailedProducerFactory());
-    }
 
 
 }
