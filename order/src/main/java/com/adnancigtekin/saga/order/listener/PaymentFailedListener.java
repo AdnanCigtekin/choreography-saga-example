@@ -21,7 +21,7 @@ public class PaymentFailedListener {
     private final OrderRepository orderRepository;
 
     @KafkaListener(
-            topics = "paymentTopic",
+            topics = "orderTopic",
             groupId = "payment-failed",
             containerFactory = "kafkaPaymentFailedListenerContainerFactory"
     )

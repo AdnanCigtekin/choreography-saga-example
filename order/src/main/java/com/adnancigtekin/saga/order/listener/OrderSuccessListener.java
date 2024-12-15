@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class ShippingFailedListener {
+public class OrderSuccessListener {
 
     private final KafkaTemplate<String, OrderEvent> kafkaOrderFailedTemplate;
     private final OrderRepository orderRepository;
@@ -21,19 +21,17 @@ public class ShippingFailedListener {
 
     @KafkaListener(
             topics = "orderTopic",
-            groupId = "shipping-failed",
-            containerFactory = "kafkaShippingFailedListenerContainerFactory"
+            groupId = "order-success",
+            containerFactory = "kafkaOrderSuccessListenerContainerFactory"
     )
     public void listen(OrderEvent event){
-        if(!event.getType().equals("shipping-failed")){
+        if(!event.getType().equals("order-success")){
             return;
         }
-        log.info("Received Following Shipping Failure Event: {}",event);
+        log.info("Received Following Order Success Event: {}",event);
 
         Order myOrder = orderRepository.findById(event.getOrderId()).get();
-        myOrder.setStatus("FAILED");
+        myOrder.setStatus("SUCCESS");
         orderRepository.save(myOrder);
-        OrderEvent failedEvent = new OrderEvent(event.getOrderId(), "FAILED",event.getDetails(),"order-failed");
-        kafkaOrderFailedTemplate.send("orderTopic",failedEvent);
     }
 }

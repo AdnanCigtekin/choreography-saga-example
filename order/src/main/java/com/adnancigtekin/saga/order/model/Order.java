@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 
@@ -15,14 +16,14 @@ public class Order {
     @Id
     @JsonProperty
     private String id;
-    @JsonProperty("items")
+    @Field("items")
     private List<Item> items;
-    @JsonProperty("address")
+    @Field("address")
     private Address address;
-    @JsonProperty("payment_method")
+    @Field("payment_method")
     private PaymentMethod paymentMethod;
-    @JsonProperty("cargo_firm_id")
-    private Integer cargoFirmId;
-    @JsonProperty("status")
+    @Field("cargo_firm_id")
+    private String cargoFirmId;
+    @Field("status")
     private String status;
 }

@@ -17,5 +17,5 @@ public class OrderDto {
     @JsonProperty("payment_method")
     private PaymentMethod paymentMethod;
     @JsonProperty("cargo_firm_id")
-    private Integer cargoFirmId;
+    private String cargoFirmId;
 }

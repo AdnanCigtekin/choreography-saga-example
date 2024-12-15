@@ -23,7 +23,7 @@ public class OrderFailedListener {
 
     @KafkaListener(
             topics = "orderTopic",
-            groupId = "order-failure",
+            groupId = "order-failed",
             containerFactory = "orderFailedListenerContainerFactory"
     )
     public void listen(OrderEvent event){

@@ -21,7 +21,7 @@ public class ItemAllocationFailedListener {
 
 
     @KafkaListener(
-            topics = "inventoryTopic",
+            topics = "orderTopic",
             groupId = "item-allocation-failed",
             containerFactory = "kafkaItemAllocationFailedListenerContainerFactory"
     )

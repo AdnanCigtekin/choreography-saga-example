@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.adnancigtekin.saga</groupId>
-	<artifactId>inventoryItem</artifactId>
+	<artifactId>payment</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inventoryItem</name>
-	<description>Order Service for choreography based SAGA implementation</description>
+	<name>payment</name>
+	<description>Payment Service for choreography based SAGA implementation</description>
 	<url/>
 	<licenses>
 		<license/>
