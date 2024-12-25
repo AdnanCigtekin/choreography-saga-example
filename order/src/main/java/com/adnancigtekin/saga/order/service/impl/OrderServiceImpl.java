@@ -34,6 +34,6 @@ public class OrderServiceImpl implements OrderService {
         OrderEvent orderCreatedEvent = new OrderEvent(savedOrder.getId(),"PENDING",order,"order-created");
 
         kafkaTemplate.send("orderTopic",orderCreatedEvent);
-        return false;
+        return true;
     }
 }

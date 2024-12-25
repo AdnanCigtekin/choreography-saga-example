@@ -16,8 +16,7 @@ public class HomeController {
     private OrderService orderService;
 
     @PostMapping(path= "/")
-    public String sendOrder(@RequestBody OrderDto order){
-        orderService.createOrder(order);
-        return "";
+    public Boolean sendOrder(@RequestBody OrderDto order){
+        return orderService.createOrder(order);
     }
 }
